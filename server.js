@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const city = "臺南市";
+const city = "臺北市";
 
 /*
  * 取得高雄天氣預報
@@ -40,7 +40,7 @@ const getKaohsiungWeather = async (req, res) => {
       {
         params: {
           Authorization: CWA_API_KEY,
-          locationName: `${city}`,
+          locationName: '高雄市',
         },
       }
     );
