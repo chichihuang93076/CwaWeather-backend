@@ -15,8 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const city = "臺北市";
-
 /*
  * 取得高雄天氣預報
  * CWA 氣象資料開放平臺 API
@@ -147,6 +145,11 @@ const getCityWeather = async (req, res) => {
     // 呼叫 CWA API - 一般天氣預報（36小時）
     // API 文件: https://opendata.cwa.gov.tw/dist/opendata-swagger.html
     //https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWA-B55A1591-F2EB-4F37-B21A-65C4D6F6C8BC&locationName=%E9%AB%98%E9%9B%84%E5%B8%82
+
+    // 修改：從前端 URL query 取得縣市名稱 (例如: /api/weather?city=宜蘭縣)
+    // 如果沒有傳 city 參數，預設使用 "高雄市"
+    const city= req.query.city || "高雄市";
+
     const response = await axios.get(
       `${CWA_API_BASE_URL}/v1/rest/datastore/F-C0032-001`,
       {
@@ -248,7 +251,7 @@ app.get("/", (req, res) => {
     endpoints: {
       kaohsiung: "/api/weather/kaohsiung",
       health: "/api/health",    
-      citydata: "/api/weather/citydata",
+      weather: "/api/weather?city=高雄市",
     },
   });
 });
@@ -260,8 +263,8 @@ app.get("/api/health", (req, res) => {
 // 取得高雄天氣預報
 app.get("/api/weather/kaohsiung", getKaohsiungWeather);
 
-// 取得城市天氣預報
-app.get("/api/weather/citydata", getCityWeather);
+// 取得城市天氣預報, // 修改：路由路徑改為通用的 /api/weather
+app.get("/api/weather/", getCityWeather);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
